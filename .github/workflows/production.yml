@@ -1,0 +1,105 @@
+on:
+  push:
+    branches:
+      - main
+
+env:
+  BUILD_VERSION: 1.0.0.${{github.run_number}}
+  BUILD_CONFIGURATION: Release
+
+jobs:
+  build-client:
+    environment: production
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repos
+        uses: actions/checkout@v3
+      - name: Setup Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+      - name: Rewrite .env
+        shell: pwsh
+        run: |
+          $path = 'source/client/.env'
+          $content = Get-Content -Path $path
+          $content = $content -replace "{{TELEMETRY_CONNECTION_STRING}}", "${{secrets.TELEMETRY_CONNECTION_STRING}}"
+          $content = $content -replace "{{SEARCH_API_KEY}}", "${{secrets.SEARCH_API_KEY}}"
+          $content = $content -replace "{{SEARCH_API_URL}}", "${{secrets.SEARCH_API_URL}}"
+          Out-File -FilePath $path -InputObject $content -Encoding UTF8
+      - name: Build client
+        run: |
+          npm ci
+          npm run build
+        working-directory: source/client
+      - name: Upload client build files
+        uses: actions/upload-artifact@v3
+        with:
+          name: zenn-search-client
+          path: source/client/dist
+  build-server:
+    environment: production
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repos
+        uses: actions/checkout@v3
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 7.x
+      - name: Restore server
+        run: dotnet restore
+        working-directory: source/server
+      - name: Build server
+        run: |
+          dotnet publish `
+            -c ${{env.BUILD_CONFIGURATION}} `
+            -p:PublishDir=dist `
+            -p:Version=${{env.BUILD_VERSION}} `
+            -p:FileVersion=${{env.BUILD_VERSION}}
+        working-directory: source/server
+      - name: Upload server build files
+        uses: actions/upload-artifact@v3
+        with:
+          name: zenn-search-server
+          path: source/server/dist
+  deploy-client:
+    needs: build-client
+    environment: production
+    runs-on: ubuntu-latest
+    steps:
+      - name: Connect to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{secrets.AZURE_CREDENTIALS}}
+      - name: Download client build files
+        uses: actions/download-artifact@v3
+        with:
+          name: zenn-search-client
+          path: artifact/zenn-search-client
+      - name: Deploy client
+        uses: azure/cli@v1
+        with:
+          inlineScript: |
+            az storage blob delete-batch --account-name ${{secrets.AZURE_STORAGE_ACCOUNT_NAME}} --source '$web'
+            az storage blob upload-batch --account-name ${{secrets.AZURE_STORAGE_ACCOUNT_NAME}} --auth-mode key --destination '$web' --source artifact/zenn-search-client
+            az cdn endpoint purge --content-paths '/*' --profile-name ${{secrets.AZURE_CDN_PROFILE_NAME}} --name ${{secrets.AZURE_CDN_ENDPOINT_NAME}} --resource-group ${{secrets.AZURE_RESOURCE_GROUP_NAME}}
+  deploy-server:
+    needs: build-server
+    environment: production
+    runs-on: windows-latest
+    steps:
+      - name: Connect to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{secrets.AZURE_CREDENTIALS}}
+      - name: Download server build files
+        uses: actions/download-artifact@v3
+        with:
+          name: zenn-search-server
+          path: artifact/zenn-search-server
+      - name: Deploy server
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{secrets.AZURE_FUNC_NAME}}
+          package: artifact/zenn-search-server

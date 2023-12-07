@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Karamem0.ZennSearch.Functions": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7116",
+      "launchBrowser": false,
+      "environmentVariables": {
+        "AZURE_FUNCTIONS_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
