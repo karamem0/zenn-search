@@ -4,7 +4,7 @@ on:
       - main
 
 env:
-  BUILD_VERSION: 1.0.0.${{github.run_number}}
+  BUILD_VERSION: 1.1.0.${{github.run_number}}
   BUILD_CONFIGURATION: Release
 
 jobs:

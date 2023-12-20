@@ -62,7 +62,7 @@ namespace Karamem0.ZennSearch.Functions
                     return res;
                 }
                 var vector = await this.openAIService.GetEmbeddingsAsync(queries["query"] ?? "");
-                var count = RegexHelper.ParseUInt32(queries["count"], 10);
+                var count = UInt32Parser.Parse(queries["count"], 10);
                 var results = await this.indexDBService.SearchAsync(vector, (int)count);
                 res.StatusCode = HttpStatusCode.OK;
                 await res.WriteAsJsonAsync(new { value = results });

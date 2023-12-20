@@ -38,13 +38,13 @@ namespace Karamem0.ZennSearch.Services
                     var blob = this.client.GetBlobClient(name);
                     var properties = await blob.GetPropertiesAsync();
                     var download = await blob.DownloadContentAsync();
-                    var text = download.Value.Content.ToString();
+                    var parser = new MarkdownParser(download.Value.Content.ToString());
                     yield return new BlobStorageData()
                     {
                         Name = Path.GetFileNameWithoutExtension(name),
-                        Title = RegexHelper.GetMarkdownTitle(text),
-                        Emoji = RegexHelper.GetMarkdownEmoji(text),
-                        Content = RegexHelper.GetMarkdownContent(text),
+                        Title = parser.Title,
+                        Emoji = parser.Emoji,
+                        Content = parser.Content,
                         Created = properties.Value.CreatedOn.UtcDateTime,
                         Updated = properties.Value.LastModified.UtcDateTime,
                         ETag = properties.Value.ETag.ToString()
