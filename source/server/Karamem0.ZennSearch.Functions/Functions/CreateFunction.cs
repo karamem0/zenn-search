@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 namespace Karamem0.ZennSearch.Functions
 {
 
-    public class IndexFunction
+    public class CreateFunction
     {
 
         private readonly ILogger logger;
@@ -31,14 +31,14 @@ namespace Karamem0.ZennSearch.Functions
 
         private readonly OpenAIService openAIService;
 
-        public IndexFunction(
+        public CreateFunction(
             ILoggerFactory loggerFactory,
             BlobStorageService blobStorageService,
             IndexDBService indexDBService,
             OpenAIService openAIService
         )
         {
-            this.logger = loggerFactory.CreateLogger<IndexFunction>();
+            this.logger = loggerFactory.CreateLogger<CreateFunction>();
             this.blobStorageService = blobStorageService;
             this.indexDBService = indexDBService;
             this.openAIService = openAIService;
@@ -46,15 +46,16 @@ namespace Karamem0.ZennSearch.Functions
 
 #pragma warning disable IDE0060
 
-        [Function("Index")]
+        [Function("Create")]
         public async Task Run([TimerTrigger("0 0 * * * *")] object timerInfo)
         {
             try
             {
-                this.logger.IndexStarted();
+                this.logger.CreationStarted();
                 await foreach (var blobItem in this.blobStorageService.GetBlobsAsync())
                 {
-                    if (blobItem.Name is null ||
+                    if (
+                        blobItem.Name is null ||
                         blobItem.Content is null ||
                         blobItem.ETag is null
                     )
@@ -78,11 +79,11 @@ namespace Karamem0.ZennSearch.Functions
                                 ETag = blobItem.ETag
                             }
                         );
-                        this.logger.IndexExecuted(blobItem.Name, blobItem.ETag);
+                        this.logger.CreationExecuted(blobItem.Name, blobItem.ETag);
                     }
                     else
                     {
-                        this.logger.IndexSkipped(blobItem.Name, blobItem.ETag);
+                        this.logger.CreationSkipped(blobItem.Name, blobItem.ETag);
                     }
                 }
             }
@@ -92,7 +93,7 @@ namespace Karamem0.ZennSearch.Functions
             }
             finally
             {
-                this.logger.IndexEnded();
+                this.logger.CreationEnded();
             }
         }
 

@@ -63,7 +63,7 @@ namespace Karamem0.ZennSearch.Functions
                 }
                 var vector = await this.openAIService.GetEmbeddingsAsync(queries["query"] ?? "");
                 var count = UInt32Parser.Parse(queries["count"], 10);
-                var results = await this.indexDBService.SearchAsync(vector, (int)count);
+                var results = this.indexDBService.SearchAsync(vector, (int)count);
                 res.StatusCode = HttpStatusCode.OK;
                 await res.WriteAsJsonAsync(new { value = results });
                 return res;

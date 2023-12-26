@@ -53,6 +53,11 @@ namespace Karamem0.ZennSearch.Services
             }
         }
 
+        public async Task<bool> ExistsAsync(string name)
+        {
+            return await this.client.GetBlobClient(name).ExistsAsync();
+        }
+
     }
 
 }

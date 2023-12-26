@@ -22,14 +22,14 @@ namespace Karamem0.ZennSearch.Helpers
         [GeneratedRegex("[\\r\\n]+")]
         private static partial Regex RegexNewLine();
 
-        [GeneratedRegex("^title:\\s*\"(.+?)\"\\r?$", RegexOptions.Multiline)]
+        [GeneratedRegex("^title:\\s*\"(.+?)\"\r?$", RegexOptions.Multiline)]
         private static partial Regex RegexTitle();
 
-        [GeneratedRegex("^emoji:\\s*\"(.+?)\"\\r?$", RegexOptions.Multiline)]
+        [GeneratedRegex("^emoji:\\s*\"(.+?)\"\r?$", RegexOptions.Multiline)]
         private static partial Regex RegexEmoji();
 
         [GeneratedRegex("---(.+?)---\n", RegexOptions.Singleline)]
-        private static partial Regex RegexHeader();
+        private static partial Regex RegexFrontMatter();
 
         [GeneratedRegex(":::(.+?):::\n", RegexOptions.Singleline)]
         private static partial Regex RegexMessage();
@@ -37,11 +37,32 @@ namespace Karamem0.ZennSearch.Helpers
         [GeneratedRegex("```(.+?)```\n", RegexOptions.Singleline)]
         private static partial Regex RegexPre();
 
+        [GeneratedRegex("^#+\\s(.+?)$", RegexOptions.Multiline)]
+        private static partial Regex RegexHeading();
+
+        [GeneratedRegex("^\\s*[-\\*]\\s(.+?)$", RegexOptions.Multiline)]
+        private static partial Regex RegexList();
+
+        [GeneratedRegex("^\\s*[0-9]*\\.\\s(.+?)$", RegexOptions.Multiline)]
+        private static partial Regex RegexNumber();
+
+        [GeneratedRegex("^\\s*\\>\\s(.+?)$", RegexOptions.Multiline)]
+        private static partial Regex RegexQuote();
+
+        [GeneratedRegex("^@\\[(.+?)\\]\\((.+?)\\)$", RegexOptions.Multiline)]
+        private static partial Regex RegexEmbedded();
+
+        [GeneratedRegex("^https?://.+$", RegexOptions.Multiline)]
+        private static partial Regex RegexUrl();
+
         [GeneratedRegex("\\*\\*(.+?)\\*\\*", RegexOptions.Multiline)]
         private static partial Regex RegexStrong();
 
         [GeneratedRegex("`(.+?)`", RegexOptions.Multiline)]
         private static partial Regex RegexCode();
+
+        [GeneratedRegex("\\!?\\[(.*?)\\](?:\\((.+?)\\))?", RegexOptions.Multiline)]
+        private static partial Regex RegexLink();
 
         private readonly string text;
 
@@ -60,30 +81,19 @@ namespace Karamem0.ZennSearch.Helpers
             {
                 var value = this.text;
                 value = RegexNewLine().Replace(value, "\n");
-                value = RegexHeader().Replace(value, "");
+                value = RegexFrontMatter().Replace(value, "");
                 value = RegexMessage().Replace(value, "");
                 value = RegexPre().Replace(value, "");
+                value = RegexHeading().Replace(value, "");
+                value = RegexList().Replace(value, "$1");
+                value = RegexNumber().Replace(value, "$1");
+                value = RegexQuote().Replace(value, "$1");
+                value = RegexEmbedded().Replace(value, "");
+                value = RegexUrl().Replace(value, "");
                 value = RegexStrong().Replace(value, "$1");
                 value = RegexCode().Replace(value, "$1");
-                var lines = value.Split('\n', StringSplitOptions.None);
-                var buffer = new StringBuilder();
-                foreach (var line in lines.Select(_ => _.Trim()))
-                {
-                    if (line.StartsWith("#") ||
-                        line.StartsWith("-") ||
-                        line.StartsWith("*") ||
-                        line.StartsWith(">") ||
-                        line.StartsWith("[") ||
-                        line.StartsWith("![") ||
-                        line.StartsWith("{{") ||
-                        line.StartsWith("http")
-                    )
-                    {
-                        continue;
-                    }
-                    _ = buffer.Append(line);
-                }
-                return buffer.ToString();
+                value = RegexLink().Replace(value, "");
+                return value.Replace("\n", "");
             }
         }
 

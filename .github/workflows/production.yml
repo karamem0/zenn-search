@@ -4,7 +4,7 @@ on:
       - main
 
 env:
-  BUILD_VERSION: 1.1.0.${{github.run_number}}
+  BUILD_VERSION: 1.2.0
   BUILD_CONFIGURATION: Release
 
 jobs:
@@ -18,7 +18,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
-      - name: Rewrite .env
+      - name: Update .env
         shell: pwsh
         run: |
           $path = 'source/client/.env'
@@ -29,6 +29,7 @@ jobs:
           Out-File -FilePath $path -InputObject $content -Encoding UTF8
       - name: Build client
         run: |
+          npm version ${{env.BUILD_VERSION}} --no-git-tag-version
           npm ci
           npm run build
         working-directory: source/client
@@ -50,19 +51,22 @@ jobs:
       - name: Restore server
         run: dotnet restore
         working-directory: source/server
+      - name: Test server
+        run: dotnet test
+        working-directory: source/server
       - name: Build server
         run: |
           dotnet publish `
             -c ${{env.BUILD_CONFIGURATION}} `
             -p:PublishDir=dist `
-            -p:Version=${{env.BUILD_VERSION}} `
-            -p:FileVersion=${{env.BUILD_VERSION}}
+            -p:Version=${{env.BUILD_VERSION}}.${{github.run_number}} `
+            -p:FileVersion=${{env.BUILD_VERSION}}.${{github.run_number}}
         working-directory: source/server
       - name: Upload server build files
         uses: actions/upload-artifact@v3
         with:
           name: zenn-search-server
-          path: source/server/dist
+          path: source/server/Karamem0.ZennSearch.Functions/dist
   deploy-client:
     needs: build-client
     environment: production

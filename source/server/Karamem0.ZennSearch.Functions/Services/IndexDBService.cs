@@ -30,16 +30,37 @@ namespace Karamem0.ZennSearch.Services
                 .GetCollection<IndexData>(collectionName);
         }
 
+        public async Task DeleteOneAsync(string name)
+        {
+            _ = await this.collection
+                .DeleteOneAsync(
+                    Builders<IndexData>.Filter.Eq("_id", name)
+                );
+        }
+
         public async Task<IndexData?> FindOneAsync(string name, string etag)
         {
-            return await this.collection
+            var cursor = await this.collection
                 .FindAsync(
                     Builders<IndexData>.Filter.And(
                         Builders<IndexData>.Filter.Eq("_id", name),
                         Builders<IndexData>.Filter.Eq("etag", etag)
                     )
-                )
-                .ContinueWith(_ => _.Result.FirstOrDefault());
+                );
+            return await cursor.FirstOrDefaultAsync();
+        }
+
+        public async IAsyncEnumerable<IndexData?> FindAllAsync()
+        {
+            var cursor = await this.collection
+                .FindAsync(Builders<IndexData>.Filter.Empty);
+            while (await cursor.MoveNextAsync())
+            {
+                foreach (var value in cursor.Current)
+                {
+                    yield return value;
+                }
+            }
         }
 
         public async Task ReplaceOneAsync(IndexData value)
@@ -57,10 +78,10 @@ namespace Karamem0.ZennSearch.Services
                 );
         }
 
-        public async Task<IEnumerable<SearchIndexData?>> SearchAsync(IReadOnlyCollection<float> vector, int count)
+        public async IAsyncEnumerable<SearchIndexData?> SearchAsync(IReadOnlyCollection<float> vector, int count)
         {
-            return await this.collection
-                .Aggregate(PipelineDefinition<IndexData, SearchIndexData>.Create(
+            var cursor = await this.collection
+                .AggregateAsync(PipelineDefinition<IndexData, SearchIndexData>.Create(
                     new BsonDocument()
                     {
                         ["$search"] = new BsonDocument()
@@ -85,9 +106,14 @@ namespace Karamem0.ZennSearch.Services
                             ["value"] = "$$ROOT"
                         }
                     }
-                ))
-                .ToListAsync()
-                ?? Enumerable.Empty<SearchIndexData?>();
+                ));
+            while (await cursor.MoveNextAsync())
+            {
+                foreach (var value in cursor.Current)
+                {
+                    yield return value;
+                }
+            }
         }
 
     }

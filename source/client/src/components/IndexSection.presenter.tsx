@@ -102,10 +102,13 @@ function IndexSection(props: Readonly<IndexSectionProps>) {
                 as="p"
                 css={css`
                   position: relative;
+                  display: -webkit-box;
                   grid-row: 3 / 4;
                   grid-column: 1 / 3;
                   height: calc(3rem * 1.25);
                   overflow: hidden;
+                  -webkit-line-clamp: 3;
+                  -webkit-box-orient: vertical;
                 `}>
                 {index.content}
               </Text>
