@@ -4,7 +4,7 @@ on:
       - main
 
 env:
-  BUILD_VERSION: 1.2.0
+  BUILD_VERSION: 1.2.1
   BUILD_CONFIGURATION: Release
 
 jobs:
@@ -14,10 +14,10 @@ jobs:
     steps:
       - name: Checkout repos
         uses: actions/checkout@v3
-      - name: Setup Node.js 18.x
+      - name: Setup Node.js 20.x
         uses: actions/setup-node@v3
         with:
-          node-version: 18.x
+          node-version: 20.x
       - name: Update .env
         shell: pwsh
         run: |
@@ -27,11 +27,17 @@ jobs:
           $content = $content -replace "{{SEARCH_API_KEY}}", "${{secrets.SEARCH_API_KEY}}"
           $content = $content -replace "{{SEARCH_API_URL}}", "${{secrets.SEARCH_API_URL}}"
           Out-File -FilePath $path -InputObject $content -Encoding UTF8
+      - name: Update client version
+        run: npm version ${{env.BUILD_VERSION}} --no-git-tag-version
+        working-directory: source/client
+      - name: Restore client
+        run: npm ci
+        working-directory: source/client
+      - name: Test client
+        run: npm run test:ci
+        working-directory: source/client
       - name: Build client
-        run: |
-          npm version ${{env.BUILD_VERSION}} --no-git-tag-version
-          npm ci
-          npm run build
+        run: npm run build
         working-directory: source/client
       - name: Upload client build files
         uses: actions/upload-artifact@v3

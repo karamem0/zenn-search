@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2023 karamem0
+// Copyright (c) 2023-2024 karamem0
 //
 // This software is released under the MIT License.
 //
@@ -12,7 +12,7 @@ import { ReactPlugin, withAITracking } from '@microsoft/applicationinsights-reac
 import { ApplicationInsights } from '@microsoft/applicationinsights-web';
 
 const reactPlugin = new ReactPlugin();
-const connectionString = import.meta.env.VITE_TELEMETRY_CONNECTION_STRING;
+const connectionString = process.env.VITE_TELEMETRY_CONNECTION_STRING;
 if (connectionString) {
   const appInsights = new ApplicationInsights({
     config: {

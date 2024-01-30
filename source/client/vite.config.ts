@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2023 karamem0
+// Copyright (c) 2023-2024 karamem0
 //
 // This software is released under the MIT License.
 //
@@ -8,9 +8,13 @@
 
 import reactPlugin from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
+import envPlugin from 'vite-plugin-env-compatible';
 
 export default defineConfig({
   plugins: [
+    envPlugin({
+      prefix: 'VITE'
+    }),
     reactPlugin({
       jsxImportSource: '@emotion/react'
     })

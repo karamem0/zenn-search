@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2023 karamem0
+// Copyright (c) 2023-2024 karamem0
 //
 // This software is released under the MIT License.
 //
@@ -115,7 +115,7 @@ function IndexSection(props: Readonly<IndexSectionProps>) {
               <Button
                 appearance="primary"
                 as="a"
-                href={`${import.meta.env.VITE_ZENN_URL}/articles/${index.id}`}
+                href={`${process.env.VITE_ZENN_URL}/articles/${index.id}`}
                 shape="circular"
                 target="_blank"
                 css={css`
