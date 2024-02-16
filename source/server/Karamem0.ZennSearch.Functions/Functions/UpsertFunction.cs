@@ -20,33 +20,25 @@ using System.Threading.Tasks;
 namespace Karamem0.ZennSearch.Functions
 {
 
-    public class CreateFunction
+    public class UpsertFunction(
+        ILoggerFactory loggerFactory,
+        BlobStorageService blobStorageService,
+        IndexDBService indexDBService,
+        OpenAIService openAIService
+    )
     {
 
-        private readonly ILogger logger;
+        private readonly ILogger logger = loggerFactory.CreateLogger<UpsertFunction>();
 
-        private readonly BlobStorageService blobStorageService;
+        private readonly BlobStorageService blobStorageService = blobStorageService;
 
-        private readonly IndexDBService indexDBService;
+        private readonly IndexDBService indexDBService = indexDBService;
 
-        private readonly OpenAIService openAIService;
-
-        public CreateFunction(
-            ILoggerFactory loggerFactory,
-            BlobStorageService blobStorageService,
-            IndexDBService indexDBService,
-            OpenAIService openAIService
-        )
-        {
-            this.logger = loggerFactory.CreateLogger<CreateFunction>();
-            this.blobStorageService = blobStorageService;
-            this.indexDBService = indexDBService;
-            this.openAIService = openAIService;
-        }
+        private readonly OpenAIService openAIService = openAIService;
 
 #pragma warning disable IDE0060
 
-        [Function("Create")]
+        [Function("Upsert")]
         public async Task Run([TimerTrigger("0 0 * * * *")] object timerInfo)
         {
             try

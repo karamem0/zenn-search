@@ -20,25 +20,18 @@ using System.Threading.Tasks;
 namespace Karamem0.ZennSearch.Functions
 {
 
-    public class DeleteFunction
+    public class DeleteFunction(
+        ILoggerFactory loggerFactory,
+        BlobStorageService blobStorageService,
+        IndexDBService indexDBService
+    )
     {
 
-        private readonly ILogger logger;
+        private readonly ILogger logger = loggerFactory.CreateLogger<DeleteFunction>();
 
-        private readonly BlobStorageService blobStorageService;
+        private readonly BlobStorageService blobStorageService = blobStorageService;
 
-        private readonly IndexDBService indexDBService;
-
-        public DeleteFunction(
-            ILoggerFactory loggerFactory,
-            BlobStorageService blobStorageService,
-            IndexDBService indexDBService
-        )
-        {
-            this.logger = loggerFactory.CreateLogger<DeleteFunction>();
-            this.blobStorageService = blobStorageService;
-            this.indexDBService = indexDBService;
-        }
+        private readonly IndexDBService indexDBService = indexDBService;
 
 #pragma warning disable IDE0060
 

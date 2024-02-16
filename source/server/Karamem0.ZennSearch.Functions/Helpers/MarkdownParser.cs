@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 namespace Karamem0.ZennSearch.Helpers
 {
 
-    public partial class MarkdownParser
+    public partial class MarkdownParser(string text)
     {
 
         [GeneratedRegex("[\\r\\n]+")]
@@ -64,12 +64,7 @@ namespace Karamem0.ZennSearch.Helpers
         [GeneratedRegex("\\!?\\[(.*?)\\](?:\\((.+?)\\))?", RegexOptions.Multiline)]
         private static partial Regex RegexLink();
 
-        private readonly string text;
-
-        public MarkdownParser(string text)
-        {
-            this.text = text;
-        }
+        private readonly string text = text;
 
         public string Title => RegexTitle().Match(this.text).Groups[1].Value;
 

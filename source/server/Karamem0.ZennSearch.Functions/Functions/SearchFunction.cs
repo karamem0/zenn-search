@@ -23,25 +23,18 @@ using System.Web;
 namespace Karamem0.ZennSearch.Functions
 {
 
-    public class SearchFunction
+    public class SearchFunction(
+        ILoggerFactory loggerFactory,
+        IndexDBService indexDBService,
+        OpenAIService openAIService
+    )
     {
 
-        private readonly ILogger logger;
+        private readonly ILogger logger = loggerFactory.CreateLogger<SearchFunction>();
 
-        private readonly IndexDBService indexDBService;
+        private readonly IndexDBService indexDBService = indexDBService;
 
-        private readonly OpenAIService openAIService;
-
-        public SearchFunction(
-            ILoggerFactory loggerFactory,
-            IndexDBService indexDBService,
-            OpenAIService openAIService
-        )
-        {
-            this.logger = loggerFactory.CreateLogger<SearchFunction>();
-            this.indexDBService = indexDBService;
-            this.openAIService = openAIService;
-        }
+        private readonly OpenAIService openAIService = openAIService;
 
         [Function("Search")]
         public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "GET")] HttpRequestData req)

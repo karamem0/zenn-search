@@ -16,33 +16,19 @@ using System.Threading.Tasks;
 namespace Karamem0.ZennSearch.Services
 {
 
-    public class OpenAIService
+    public class OpenAIService(OpenAIClient client, string modelName)
     {
 
-        private readonly OpenAIClient client;
+        private readonly OpenAIClient client = client;
 
-        private readonly string modelName;
-
-        public OpenAIService(OpenAIClient client, string modelName)
-        {
-            this.client = client;
-            this.modelName = modelName;
-        }
+        private readonly string modelName = modelName;
 
         public async Task<float[]> GetEmbeddingsAsync(string text)
         {
             return await this.client
-                .GetEmbeddingsAsync(new EmbeddingsOptions()
-                {
-                    DeploymentName = this.modelName,
-                    Input = new List<string>()
-                    {
-                        text
-                    }
-                })
+                .GetEmbeddingsAsync(new EmbeddingsOptions(this.modelName, [text]))
                 .ContinueWith(_ => _.Result.Value.Data[0].Embedding.ToArray());
         }
-
 
     }
 

@@ -19,15 +19,10 @@ using System.Threading.Tasks;
 namespace Karamem0.ZennSearch.Services
 {
 
-    public class BlobStorageService
+    public class BlobStorageService(BlobContainerClient client)
     {
 
-        private readonly BlobContainerClient client;
-
-        public BlobStorageService(BlobContainerClient client)
-        {
-            this.client = client;
-        }
+        private readonly BlobContainerClient client = client;
 
         public async IAsyncEnumerable<BlobStorageData> GetBlobsAsync()
         {

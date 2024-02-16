@@ -18,17 +18,16 @@ using System.Threading.Tasks;
 namespace Karamem0.ZennSearch.Services
 {
 
-    public class IndexDBService
+    public class IndexDBService(
+        MongoClient client,
+        string databaseName,
+        string collectionName
+    )
     {
 
-        private readonly IMongoCollection<IndexData> collection;
-
-        public IndexDBService(MongoClient client, string databaseName, string collectionName)
-        {
-            this.collection = client
+        private readonly IMongoCollection<IndexData> collection = client
                 .GetDatabase(databaseName)
                 .GetCollection<IndexData>(collectionName);
-        }
 
         public async Task DeleteOneAsync(string name)
         {
