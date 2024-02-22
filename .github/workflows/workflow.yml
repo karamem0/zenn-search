@@ -4,7 +4,7 @@ on:
       - main
 
 env:
-  BUILD_VERSION: 1.2.2
+  BUILD_VERSION: '1.2.3'
   BUILD_CONFIGURATION: Release
 
 jobs:
