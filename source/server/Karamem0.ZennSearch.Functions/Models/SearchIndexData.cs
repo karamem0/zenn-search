@@ -14,24 +14,21 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace Karamem0.ZennSearch.Models
+namespace Karamem0.ZennSearch.Models;
+
+public class SearchIndexData
 {
 
-    public class SearchIndexData
-    {
+    [BsonElement("@@score")]
+    [JsonPropertyName("@search.score")]
+    public double? Score { get; set; }
 
-        [BsonElement("@@score")]
-        [JsonPropertyName("@@score")]
-        public double? Score { get; set; }
+    [BsonElement("_id")]
+    [JsonPropertyName("id")]
+    public string? Id { get; set; }
 
-        [BsonElement("_id")]
-        [JsonPropertyName("id")]
-        public string? Id { get; set; }
-
-        [BsonElement("value")]
-        [JsonPropertyName("value")]
-        public IndexData? Value { get; set; }
-
-    }
+    [BsonElement("value")]
+    [JsonPropertyName("value")]
+    public SearchIndexItemData? Value { get; set; }
 
 }

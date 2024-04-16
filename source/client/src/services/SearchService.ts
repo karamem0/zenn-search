@@ -7,13 +7,15 @@
 //
 
 import { mapper } from '../mappings/AutoMapperProfile';
-import { SearchIndexData, SearchIndexDataDTO } from '../types/Model';
+import {
+  SearchIndexData,
+  SearchIndexDataDTO,
+  SearchTarget
+} from '../types/Model';
 
-export async function searchIndex(query: string, count: number = 10): Promise<SearchIndexData[]> {
+export async function searchIndex(target: SearchTarget, query: string, count: number = 10): Promise<SearchIndexData[]> {
   return await fetch(
-    `${process.env.VITE_SEARCH_API_URL}` +
-    `?query=${query}` +
-    `&count=${count}`,
+    `${process.env.VITE_SEARCH_API_URL}?target=${target}&query=${query}&count=${count}`,
     {
       method: 'GET',
       mode: 'cors',

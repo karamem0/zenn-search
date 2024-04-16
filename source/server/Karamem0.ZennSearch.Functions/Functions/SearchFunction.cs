@@ -8,7 +8,8 @@
 
 using Karamem0.ZennSearch.Helpers;
 using Karamem0.ZennSearch.Logging;
-using Karamem0.ZennSearch.Services;
+using Karamem0.ZennSearch.Models;
+using Karamem0.ZennSearch.Tasks;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
@@ -18,61 +19,60 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web;
 
-namespace Karamem0.ZennSearch.Functions
+namespace Karamem0.ZennSearch.Functions.AISearch;
+
+public class SearchFunction(
+    ILoggerFactory loggerFactory,
+    SearchTask searchTask
+)
 {
 
-    public class SearchFunction(
-        ILoggerFactory loggerFactory,
-        IndexDBService indexDBService,
-        OpenAIService openAIService
-    )
+    private readonly ILogger logger = loggerFactory.CreateLogger<SearchFunction>();
+
+    private readonly SearchTask searchTask = searchTask;
+
+    [Function("Search")]
+    public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "GET")] HttpRequestData httpRequest)
     {
-
-        private readonly ILogger logger = loggerFactory.CreateLogger<SearchFunction>();
-
-        private readonly IndexDBService indexDBService = indexDBService;
-
-        private readonly OpenAIService openAIService = openAIService;
-
-        [Function("Search")]
-        public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "GET")] HttpRequestData req)
+        var httpResponse = httpRequest.CreateResponse();
+        try
         {
-            var res = req.CreateResponse();
-            try
+            var searchRequest = new SearchRequestData(httpRequest.Url.Query);
+            var searchResults = await Task.WhenAll(
+                this.searchTask.SearchAISearch(searchRequest.Query, searchRequest.Count),
+                this.searchTask.SearchMongoDB(searchRequest.Query, searchRequest.Count)
+            );
+            var searchResponse = new SearchResponseData()
             {
-                this.logger.SearchStarted();
-                var queries = HttpUtility.ParseQueryString(req.Url.Query);
-                if (queries == null)
+                Value = searchRequest.Target switch
                 {
-                    res.StatusCode = HttpStatusCode.BadRequest;
-                    return res;
+                    SearchTarget.Both => RerankHelper.Fuse(searchResults).Take(searchRequest.Count).ToArray(),
+                    SearchTarget.AISearch => searchResults[0],
+                    SearchTarget.MongoDB => searchResults[1],
+                    _ => throw new NotImplementedException()
                 }
-                if (string.IsNullOrEmpty(queries["query"]))
-                {
-                    res.StatusCode = HttpStatusCode.BadRequest;
-                    return res;
-                }
-                var vector = await this.openAIService.GetEmbeddingsAsync(queries["query"] ?? "");
-                var count = UInt32Parser.Parse(queries["count"], 10);
-                var results = this.indexDBService.SearchAsync(vector, (int)count);
-                res.StatusCode = HttpStatusCode.OK;
-                await res.WriteAsJsonAsync(new { value = results });
-                return res;
-            }
-            catch (Exception ex)
-            {
-                this.logger.UnhandledError(ex);
-                res.StatusCode = HttpStatusCode.InternalServerError;
-                return res;
-            }
-            finally
-            {
-                this.logger.SearchEnded();
-            }
+            };
+            await httpResponse.WriteAsJsonAsync(searchResponse);
+            httpResponse.StatusCode = HttpStatusCode.OK;
+            return httpResponse;
         }
-
+        catch (InvalidOperationException ex)
+        {
+            this.logger.UnhandledError(ex.Message, ex);
+            httpResponse.StatusCode = HttpStatusCode.BadRequest;
+            return httpResponse;
+        }
+        catch (Exception ex)
+        {
+            this.logger.UnhandledError(ex.Message, ex);
+            httpResponse.StatusCode = HttpStatusCode.InternalServerError;
+            return httpResponse;
+        }
+        finally
+        {
+            this.logger.SearchEnded();
+        }
     }
 
 }

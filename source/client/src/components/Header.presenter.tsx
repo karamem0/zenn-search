@@ -20,7 +20,10 @@ import { GitHubLogoIcon, SearchIcon } from '@fluentui/react-icons-mdl2';
 import { useTheme } from '../providers/ThemeProvider';
 import { EventHandler } from '../types/Event';
 
+import TargetDropdown from './TargetDropdown';
+
 interface HeaderProps {
+  onDropdownSelect?: EventHandler<string>,
   onInputChange?: EventHandler<string>,
   onSubmit?: EventHandler
 }
@@ -28,6 +31,7 @@ interface HeaderProps {
 function Header(props: Readonly<HeaderProps>) {
 
   const {
+    onDropdownSelect,
     onInputChange,
     onSubmit
   } = props;
@@ -38,19 +42,16 @@ function Header(props: Readonly<HeaderProps>) {
     <header
       css={css`
         display: grid;
-        grid-template-rows: auto auto;
+        grid-template-rows: 1.5rem 2rem 2rem;
         grid-template-columns: 1fr auto;
         grid-gap: 0.5rem;
         align-items: center;
         justify-content: center;
-        height: 5rem;
         padding: 0.5rem 1rem;
         background-color: ${theme.colorBrandBackground};
         @media (width >= 960px) {
-          grid-template-rows: auto;
-          grid-template-columns: 1fr 1fr 1fr;
-          height: 3rem;
-          padding: 0 1rem;
+          grid-template-rows: 2rem;
+          grid-template-columns: 1fr 1fr 1fr auto;
         }
       `}>
       <Text
@@ -77,7 +78,7 @@ function Header(props: Readonly<HeaderProps>) {
         css={css`
           display: flex;
           flex-direction: column;
-          grid-row: 2 / 3;
+          grid-row: 3 / 4;
           grid-column: 1 / 3;
           align-items: center;
           justify-content: center;
@@ -112,6 +113,21 @@ function Header(props: Readonly<HeaderProps>) {
       </form>
       <div
         css={css`
+          display: flex;
+          flex-direction: row;
+          grid-row: 2 / 3;
+          grid-column: 1 / 3;
+          align-items: center;
+          justify-content: end;
+          @media (width >= 960px) {
+            grid-row: 1 / 2;
+            grid-column: 3 / 4;
+          }
+        `}>
+        <TargetDropdown onSelect={onDropdownSelect} />
+      </div>
+      <div
+        css={css`
           display: grid;
           grid-row: 1 / 2;
           grid-column: 2 / 3;
@@ -119,7 +135,7 @@ function Header(props: Readonly<HeaderProps>) {
           justify-content: end;
           @media (width >= 960px) {
             grid-row: 1 / 2;
-            grid-column: 3 / 4;
+            grid-column: 4 / 5;
           }
         `}>
         <Link

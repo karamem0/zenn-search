@@ -33,7 +33,7 @@ PojosMetadataMap.create<IndexDataDTO>('IndexDataDTO', {
 });
 
 PojosMetadataMap.create<SearchIndexDataDTO>('SearchIndexDataDTO', {
-  '@@score': Number,
+  '@search.score': Number,
   id: String,
   value: 'IndexDataDTO'
 });
@@ -50,7 +50,7 @@ createMap<SearchIndexDataDTO, SearchIndexData>(
   mapper,
   'SearchIndexDataDTO',
   'SearchIndexData',
-  forMember((target) => target.score, mapFrom((source) => source['@@score'])),
+  forMember((target) => target.score, mapFrom((source) => source['@search.score'])),
   forMember((target) => target.title, mapFrom((source) => source.value?.title)),
   forMember((target) => target.emoji, mapFrom((source) => source.value?.emoji)),
   forMember((target) => target.content, mapFrom((source) => source.value?.content)),

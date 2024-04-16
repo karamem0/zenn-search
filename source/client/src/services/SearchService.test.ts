@@ -8,11 +8,14 @@
 
 import fetch from 'jest-fetch-mock';
 
+import { SearchTarget } from '../types/Model';
+
 import { searchIndex } from './SearchService';
 
 test('search indexes 200 OK', () => {
   const params = {
     request: {
+      target: SearchTarget.both,
       query: 'foo',
       count: 10
     },
@@ -21,7 +24,7 @@ test('search indexes 200 OK', () => {
       body: {
         value: [
           {
-            '@@score': 0.8,
+            '@search.score': 0.8,
             id: '2020_01_01_150000',
             value: {
               title: 'foo',
@@ -50,12 +53,13 @@ test('search indexes 200 OK', () => {
     status: params.response.status,
     body: JSON.stringify(params.response.body)
   }));
-  expect(searchIndex(params.request.query, params.request.count)).resolves.toStrictEqual(expected);
+  expect(searchIndex(params.request.target, params.request.query, params.request.count)).resolves.toStrictEqual(expected);
 });
 
 test('search indexes 401 Unauthorized', () => {
   const params = {
     request: {
+      target: SearchTarget.both,
       query: 'foo',
       count: 10
     },
@@ -66,5 +70,5 @@ test('search indexes 401 Unauthorized', () => {
   fetch.mockOnce(() => Promise.resolve({
     status: params.response.status
   }));
-  expect(searchIndex(params.request.query, params.request.count)).rejects.toHaveProperty('status', 401);
+  expect(searchIndex(params.request.target, params.request.query, params.request.count)).rejects.toHaveProperty('status', 401);
 });

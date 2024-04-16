@@ -10,7 +10,7 @@ import React from 'react';
 
 import { searchIndex } from '../services/SearchService';
 import { Event } from '../types/Event';
-import { SearchIndexData } from '../types/Model';
+import { SearchIndexData, SearchTarget } from '../types/Model';
 
 import Presenter from './MainPage.presenter';
 
@@ -19,7 +19,12 @@ function MainPage() {
   const [ error, setError ] = React.useState<boolean>();
   const [ indexes, setIndexes ] = React.useState<SearchIndexData[]>();
   const [ loading, setLoading ] = React.useState<boolean>(false);
+  const [ target, setTarget ] = React.useState<SearchTarget>(SearchTarget.both);
   const [ query, setQuery ] = React.useState<string>('');
+
+  const handleDropdownSelect = React.useCallback((_?: Event, data?: string) => {
+    setTarget(data as SearchTarget);
+  }, []);
 
   const handleInputChange = React.useCallback((_?: Event, data?: string) => {
     setQuery(data ?? '');
@@ -33,7 +38,7 @@ function MainPage() {
     try {
       setLoading(true);
       setError(false);
-      setIndexes(await searchIndex(query));
+      setIndexes(await searchIndex(target, query));
     } catch (error) {
       console.error(error);
       setError(true);
@@ -41,7 +46,8 @@ function MainPage() {
       setLoading(false);
     }
   }, [
-    query
+    query,
+    target
   ]);
 
   return (
@@ -49,6 +55,7 @@ function MainPage() {
       error={error}
       indexes={indexes}
       loading={loading}
+      onDropdownSelect={handleDropdownSelect}
       onInputChange={handleInputChange}
       onSubmit={handleSubmit} />
   );

@@ -13,6 +13,7 @@ import { EventHandler } from '../types/Event';
 import Presenter from './Header.presenter';
 
 interface HeaderProps {
+  onDropdownSelect?: EventHandler<string>,
   onInputChange?: EventHandler<string>,
   onSubmit?: EventHandler
 }
@@ -20,12 +21,14 @@ interface HeaderProps {
 function Header(props: Readonly<HeaderProps>) {
 
   const {
+    onDropdownSelect,
     onInputChange,
     onSubmit
   } = props;
 
   return (
     <Presenter
+      onDropdownSelect={onDropdownSelect}
       onInputChange={onInputChange}
       onSubmit={onSubmit} />
   );

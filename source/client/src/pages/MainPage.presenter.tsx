@@ -22,8 +22,9 @@ interface MainPageProps {
   error?: boolean,
   indexes?: SearchIndexData[],
   loading?: boolean,
-  onInputChange: EventHandler<string>,
-  onSubmit: EventHandler
+  onDropdownSelect?: EventHandler<string>,
+  onInputChange?: EventHandler<string>,
+  onSubmit?: EventHandler
 }
 
 function MainPage(props: Readonly<MainPageProps>) {
@@ -32,6 +33,7 @@ function MainPage(props: Readonly<MainPageProps>) {
     error,
     loading,
     indexes,
+    onDropdownSelect,
     onInputChange,
     onSubmit
   } = props;
@@ -43,6 +45,7 @@ function MainPage(props: Readonly<MainPageProps>) {
         flex-flow: column;
       `}>
       <Header
+        onDropdownSelect={onDropdownSelect}
         onInputChange={onInputChange}
         onSubmit={onSubmit} />
       {

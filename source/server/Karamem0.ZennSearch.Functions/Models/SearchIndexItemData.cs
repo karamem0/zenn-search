@@ -16,14 +16,11 @@ using System.Threading.Tasks;
 
 namespace Karamem0.ZennSearch.Models;
 
-public class IndexData
+public class SearchIndexItemData
 {
 
-    [JsonPropertyName("@search.score")]
-    public double? Score { get; set; }
-
     [BsonElement("_id")]
-    [JsonPropertyName("id")]
+    [JsonIgnore()]
     public string? Id { get; set; }
 
     [BsonElement("title")]
@@ -39,7 +36,7 @@ public class IndexData
     public string? Content { get; set; }
 
     [BsonElement("contentVector")]
-    [JsonPropertyName("contentVector")]
+    [JsonIgnore()]
     public float[]? ContentVector { get; set; }
 
     [BsonElement("created")]

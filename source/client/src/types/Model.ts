@@ -16,7 +16,7 @@ export interface IndexDataDTO {
 }
 
 export interface SearchIndexDataDTO {
-  '@@score': number,
+  '@search.score': number,
   id: string,
   value?: IndexDataDTO
 }
@@ -28,4 +28,10 @@ export interface SearchIndexData {
   emoji: string,
   content: string,
   published: string
+}
+
+export enum SearchTarget {
+  both = 'both',
+  aisearch = 'aisearch',
+  mongodb = 'mongodb',
 }

@@ -16,38 +16,34 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Karamem0.ZennSearch.Functions;
+namespace Karamem0.ZennSearch.Functions.MongoDB;
 
-public class DeleteFunction(
+public class UploadFunction(
     ILoggerFactory loggerFactory,
-    DeleteTask deleteTask
+    UploadTask uploadTask
 )
 {
 
-    private readonly ILogger logger = loggerFactory.CreateLogger<DeleteFunction>();
+    private readonly ILogger logger = loggerFactory.CreateLogger<UploadFunction>();
 
-    private readonly DeleteTask deleteTask = deleteTask;
+    private readonly UploadTask uploadTask = uploadTask;
 
 #pragma warning disable IDE0060
 
-    [Function("Delete")]
-    public async Task Run([TimerTrigger("0 0 0 * * *")] object timerInfo)
+    [Function("Upload")]
+    public async Task Run([TimerTrigger("0 0 * * * *")] object timerInfo)
     {
         try
         {
             await Task.WhenAll(
-                this.deleteTask.DeleteAISearch(),
-                this.deleteTask.DeleteMongoDB()
+                this.uploadTask.UploadAISearch(),
+                this.uploadTask.UploadMongoDB()
             );
         }
         catch (Exception ex)
         {
             this.logger.UnhandledError(ex.Message, ex);
             throw;
-        }
-        finally
-        {
-            this.logger.DeletionEnded();
         }
     }
 

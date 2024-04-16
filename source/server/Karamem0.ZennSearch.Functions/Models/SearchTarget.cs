@@ -14,21 +14,13 @@ using System.Threading.Tasks;
 
 namespace Karamem0.ZennSearch.Models;
 
-public class BlobStorageData
+public enum SearchTarget
 {
 
-    public string? Name { get; set; }
+    Both = 0,
 
-    public string? Title { get; set; }
+    AISearch = 1,
 
-    public string? Emoji { get; set; }
-
-    public string? Content { get; set; }
-
-    public DateTime? Created { get; set; }
-
-    public DateTime? Updated { get; set; }
-
-    public string? ETag { get; set; }
+    MongoDB = 2,
 
 }

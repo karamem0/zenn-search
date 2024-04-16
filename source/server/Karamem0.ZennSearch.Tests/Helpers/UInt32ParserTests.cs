@@ -13,24 +13,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Karamem0.ZennSearch.Helpers.Tests
+namespace Karamem0.ZennSearch.Helpers.Tests;
+
+public class UInt32ParserTests
 {
 
-    public class UInt32ParserTests
+    [Test()]
+    public void Parse_Succeeded()
     {
+        Assert.That(UInt32Parser.Parse("123", 0), Is.EqualTo(123));
+    }
 
-        [Test()]
-        public void Parse_Succeeded()
-        {
-            Assert.That(UInt32Parser.Parse("123", 0), Is.EqualTo(123));
-        }
-
-        [Test()]
-        public void Parse_Failed()
-        {
-            Assert.That(UInt32Parser.Parse("abc", 123), Is.EqualTo(123));
-        }
-
+    [Test()]
+    public void Parse_Failed()
+    {
+        Assert.That(UInt32Parser.Parse("abc", 123), Is.EqualTo(123));
     }
 
 }

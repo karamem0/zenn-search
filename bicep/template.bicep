@@ -3,6 +3,7 @@ param cosmosdb_mongodb_name string
 param cosmosdb_mongodb_username string
 @secure()
 param cosmosdb_mongodb_password string
+param ai_search_name string
 
 param location string = resourceGroup().location
 
@@ -72,5 +73,17 @@ resource cosmosdb_mongodb 'Microsoft.DocumentDB/mongoClusters@2023-09-15-preview
         nodeCount: 1
       }
     ]
+  }
+}
+
+resource ai_search 'Microsoft.Search/searchServices@2024-03-01-preview' = {
+  name: ai_search_name
+  location: location
+  sku: {
+    name: 'free'
+  }
+  properties: {
+    replicaCount: 1
+    partitionCount: 1
   }
 }

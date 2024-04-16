@@ -9,6 +9,7 @@
 #pragma warning disable CA1852
 
 using Karamem0.ZennSearch;
+using Karamem0.ZennSearch.Models.Mappings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -34,10 +35,13 @@ _ = builder.ConfigureServices((context, services) =>
     _ = services.AddApplicationInsightsTelemetryWorkerService();
     _ = services.AddLogging(builder => builder.AddApplicationInsights());
     _ = services.AddHttpClient();
+    _ = services.AddAutoMapper(AutoMapperProfile.Assembly);
+    _ = services.AddAISearch(configuration);
     _ = services.AddBlobStorage(configuration);
-    _ = services.AddIndexDB(configuration);
+    _ = services.AddMongoDB(configuration);
     _ = services.AddOpenAI(configuration);
     _ = services.AddServices(configuration);
+    _ = services.AddTasks();
 });
 
 var host = builder.Build();

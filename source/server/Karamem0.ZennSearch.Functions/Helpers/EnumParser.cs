@@ -10,20 +10,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Karamem0.ZennSearch.Helpers;
 
-public static partial class UInt32Parser
+public static class EnumParser
 {
 
-    [GeneratedRegex("^[0-9]+$")]
-    private static partial Regex RegexUInt32();
-
-    public static uint Parse(string? value, uint defaultValue)
+    public static T Parse<T>(string? value, T defaultValue = default) where T : struct
     {
-        return RegexUInt32().IsMatch(value ?? "") ? uint.Parse(value!) : defaultValue;
+        return Enum.TryParse<T>(value, true, out var result) ? result : defaultValue;
     }
 
 }
