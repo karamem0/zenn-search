@@ -19,6 +19,7 @@ namespace Karamem0.ZennSearch.Models;
 public class IndexData
 {
 
+    [BsonIgnore()]
     [JsonPropertyName("@search.score")]
     public double? Score { get; set; }
 
