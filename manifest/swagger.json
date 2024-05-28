@@ -1,0 +1,130 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "からめもぶろぐ。 Search API",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "{{SEARCH_API_URL}}"
+    }
+  ],
+  "paths": {
+    "/Search": {
+      "get": {
+        "operationId": "Search",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "target",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Payload of SearchResponseData",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/searchResponseData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No description"
+          },
+          "500": {
+            "description": "No description"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "searchIndexData": {
+        "type": "object",
+        "properties": {
+          "score": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "id": {
+            "type": "string"
+          },
+          "value": {
+            "$ref": "#/components/schemas/searchIndexItemData"
+          }
+        }
+      },
+      "searchIndexItemData": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "emoji": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "contentVector": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "float"
+            }
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "updated": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "eTag": {
+            "type": "string"
+          }
+        }
+      },
+      "searchResponseData": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/searchIndexData"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.17/MicrosoftTeams.schema.json",
+  "version": "1.0.0",
+  "manifestVersion": "1.17",
+  "id": "{{TEAMS_APP_ID}}",
+  "name": {
+    "short": "からめもぶろぐ。",
+    "full": "からめもぶろぐ。"
+  },
+  "developer": {
+    "name": "karamem0",
+    "mpnId": "",
+    "websiteUrl": "https://github.com/karamem0/zenn-search",
+    "privacyUrl": "https://github.com/karamem0/zenn-search",
+    "termsOfUseUrl": "https://github.com/karamem0/zenn-search"
+  },
+  "description": {
+    "short": "Search からめもぶろぐ。 blog posts.",
+    "full": "This app allows to search からめもぶろぐ。 blog posts. It is created by karamem0 and written in Japanese. It contains technical knowledges for Microsoft 365 developers. It formerly posted to Hatena Blog, but now posted to Zenn."
+  },
+  "icons": {
+    "outline": "icon_outline.png",
+    "color": "icon_color.png"
+  },
+  "accentColor": "#2593E5",
+  "composeExtensions": [
+    {
+      "composeExtensionType": "apiBased",
+      "authorization": {
+        "authType": "apiSecretServiceAuth",
+        "apiSecretServiceAuthConfiguration": {
+          "apiSecretRegistrationId": "{{TEAMS_API_KEY_REGISTRATION_ID}}"
+        }
+      },
+      "apiSpecificationFile": "swagger.json",
+      "commands": [
+        {
+          "id": "Search",
+          "type": "query",
+          "title": "Search",
+          "description": "Search からめもぶろぐ。 blog posts",
+          "initialRun": false,
+          "fetchTask": false,
+          "context": [],
+          "parameters": [
+            {
+              "name": "query",
+              "title": "Query",
+              "description": "Search query",
+              "inputType": "text"
+            }
+          ],
+          "apiResponseRenderingTemplateFile": "response.json"
+        }
+      ]
+    }
+  ],
+  "validDomains": [],
+  "localizationInfo": {
+    "defaultLanguageTag": "en-us",
+    "additionalLanguages": [
+      {
+        "languageTag": "ja-jp",
+        "file": "ja-jp.json"
+      }
+    ]
+  }
+}

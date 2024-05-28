@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.16/MicrosoftTeams.Localization.schema.json",
+  "name.short": "からめもぶろぐ。",
+  "name.full": "からめもぶろぐ。",
+  "description.short": "からめもぶろぐ。のブログ記事を検索します。",
+  "description.full": "このアプリはからめもぶろぐ。のブログ記事を検索をすることができます。ブログは karamem0 によって作成され日本語で書かれています。ブログには Microsoft 365 開発者向けの技術情報が含まれています。かつてははてなブログに投稿されていましたが現在は Zenn に投稿されています。",
+  "composeExtensions[0].commands[0].title": "検索",
+  "composeExtensions[0].commands[0].description": "からめもぶろぐ。のブログ記事を検索します。",
+  "composeExtensions[0].commands[0].parameters[0].title": "検索クエリ",
+  "composeExtensions[0].commands[0].parameters[0].description": "検索するクエリ"
+}

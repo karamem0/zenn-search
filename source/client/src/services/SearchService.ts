@@ -15,12 +15,12 @@ import {
 
 export async function searchIndex(target: SearchTarget, query: string, count: number = 10): Promise<SearchIndexData[]> {
   return await fetch(
-    `${process.env.VITE_SEARCH_API_URL}?target=${target}&query=${query}&count=${count}`,
+    `${process.env.VITE_SEARCH_API_URL}/Search?target=${target}&query=${query}&count=${count}`,
     {
       method: 'GET',
       mode: 'cors',
       headers: {
-        'X-Functions-Key': process.env.VITE_SEARCH_API_KEY
+        Authorization: `Bearer ${process.env.VITE_SEARCH_API_KEY}`
       }
     })
     .then((response) => response.status === 200 ? response : Promise.reject(response))

@@ -1,5 +1,15 @@
 {
   "automock": false,
+  "coverageDirectory": "dist/coverage",
+  "reporters": [
+    "default",
+    [
+      "jest-junit",
+      {
+        "outputDirectory": "dist/test"
+      }
+    ]
+  ],
   "setupFiles": [
     "./jest.setup.ts"
   ],

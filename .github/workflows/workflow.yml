@@ -4,8 +4,12 @@ on:
       - main
 
 env:
-  BUILD_VERSION: '1.3.1'
+  BUILD_VERSION: '1.3.2'
   BUILD_CONFIGURATION: Release
+
+permissions:
+  checks: write
+  pull-requests: write
 
 jobs:
   build-client:
@@ -21,12 +25,13 @@ jobs:
       - name: Update .env
         shell: pwsh
         run: |
-          $path = 'source/client/.env'
-          $content = Get-Content -Path $path
+          $content = Get-Content -Path ${{env.FILE_PATH}}
           $content = $content -replace "{{TELEMETRY_CONNECTION_STRING}}", "${{secrets.TELEMETRY_CONNECTION_STRING}}"
           $content = $content -replace "{{SEARCH_API_KEY}}", "${{secrets.SEARCH_API_KEY}}"
           $content = $content -replace "{{SEARCH_API_URL}}", "${{secrets.SEARCH_API_URL}}"
-          Out-File -FilePath $path -InputObject $content -Encoding UTF8
+          Out-File -FilePath ${{env.FILE_PATH}} -InputObject $content -Encoding UTF8
+        env:
+          FILE_PATH: source/client/.env
       - name: Update client version
         run: npm version ${{env.BUILD_VERSION}} --no-git-tag-version
         working-directory: source/client
@@ -36,6 +41,17 @@ jobs:
       - name: Test client
         run: npm run test:ci
         working-directory: source/client
+      - name: Upload client test results
+        uses: EnricoMi/publish-unit-test-result-action/linux@v2
+        if: always()
+        with:
+          files: source/client/**/junit.xml
+          check_name: client-test-results
+      - name: Upload client coverage reports
+        uses: codecov/codecov-action@v4
+        with:
+          fail_ci_if_error: true
+          token: ${{secrets.CODECOV_TOKEN}}
       - name: Build client
         run: npm run build
         working-directory: source/client
@@ -46,21 +62,37 @@ jobs:
           path: source/client/dist
   build-server:
     environment: production
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repos
         uses: actions/checkout@v4
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v2
+        uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 8.x
       - name: Restore server
         run: dotnet restore
         working-directory: source/server
       - name: Test server
-        run: dotnet test
+        shell: pwsh
+        run: |
+          dotnet test `
+            -p:AltCover=true `
+            -- NUnit.TestOutputXml=${{github.workspace}}/source/server/dist/test
         working-directory: source/server
+      - name: Upload server test results
+        uses: enricomi/publish-unit-test-result-action/composite@v2
+        if: always()
+        with:
+          files: source/server/dist/**/*.xml
+          check_name: server-test-results
+      - name: Upload server coverage reports
+        uses: codecov/codecov-action@v4
+        with:
+          fail_ci_if_error: true
+          token: ${{secrets.CODECOV_TOKEN}}
       - name: Build server
+        shell: pwsh
         run: |
           dotnet publish `
             -c ${{env.BUILD_CONFIGURATION}} `
@@ -73,6 +105,34 @@ jobs:
         with:
           name: zenn-search-server
           path: source/server/Karamem0.ZennSearch.Functions/dist
+  build-manifest:
+    environment: production
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repos
+        uses: actions/checkout@v4
+      - name: Update manifest.json
+        shell: pwsh
+        run: |
+          $content = Get-Content -Path ${{env.FILE_PATH}}
+          $content = $content -replace "{{TEAMS_APP_ID}}", "${{secrets.TEAMS_APP_ID}}"
+          $content = $content -replace "{{TEAMS_API_KEY_REGISTRATION_ID}}", "${{secrets.TEAMS_API_KEY_REGISTRATION_ID}}"
+          Out-File -FilePath ${{env.FILE_PATH}} -InputObject $content -Encoding UTF8
+        env:
+          FILE_PATH: manifest/manifest.json
+      - name: Update swagger.json
+        shell: pwsh
+        run: |
+          $content = Get-Content -Path ${{env.FILE_PATH}}
+          $content = $content -replace "{{SEARCH_API_URL}}", "${{secrets.SEARCH_API_URL}}"
+          Out-File -FilePath ${{env.FILE_PATH}} -InputObject $content -Encoding UTF8
+        env:
+          FILE_PATH: manifest/swagger.json
+      - name: Upload manifest files
+        uses: actions/upload-artifact@v4
+        with:
+          name: zenn-search-manifest
+          path: manifest
   deploy-client:
     needs: build-client
     environment: production
@@ -97,7 +157,7 @@ jobs:
   deploy-server:
     needs: build-server
     environment: production
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Connect to Azure
         uses: azure/login@v2

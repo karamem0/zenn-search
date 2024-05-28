@@ -20,12 +20,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+var environment = Environment.GetEnvironmentVariable("AZURE_FUNCTIONS_ENVIRONMENT");
 var builder = new HostBuilder();
 _ = builder.ConfigureFunctionsWorkerDefaults();
 _ = builder.ConfigureAppConfiguration((context, builder) =>
 {
     _ = builder.AddJsonFile("appsettings.json", true, true);
-    _ = builder.AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("AZURE_FUNCTIONS_ENVIRONMENT")}.json", true, true);
+    _ = builder.AddJsonFile($"appsettings.{environment}.json", true, true);
     _ = builder.AddUserSecrets<Program>(true, true);
     _ = builder.AddEnvironmentVariables();
 });

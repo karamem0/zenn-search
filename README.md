@@ -1,6 +1,7 @@
 # からめもぶろぐ。記事検索
 
 [![.github/workflows/workflow.yml](https://github.com/karamem0/zenn-search/actions/workflows/workflow.yml/badge.svg)](https://github.com/karamem0/zenn-search/actions/workflows/workflow.yml)
+[![codecov](https://codecov.io/gh/karamem0/zenn-search/graph/badge.svg?token=UY4ZU4E73I)](https://codecov.io/gh/karamem0/zenn-search)
 [![License](https://img.shields.io/github/license/karamem0/zenn-search.svg)](https://github.com/karamem0/zenn-search/blob/main/LICENSE)
 
 Azure AI Search および Azure Cosmos DB for MongoDB vCore を使ってベクター検索をするサンプルです。

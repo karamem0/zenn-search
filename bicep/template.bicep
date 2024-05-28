@@ -1,9 +1,15 @@
 param storage_account_name string
+
 param cosmosdb_mongodb_name string
 param cosmosdb_mongodb_username string
 @secure()
 param cosmosdb_mongodb_password string
+
 param ai_search_name string
+
+param api_management_name string
+param api_management_publisher_email string
+param api_management_publisher_name string
 
 param location string = resourceGroup().location
 
@@ -85,5 +91,18 @@ resource ai_search 'Microsoft.Search/searchServices@2024-03-01-preview' = {
   properties: {
     replicaCount: 1
     partitionCount: 1
+  }
+}
+
+resource api_management 'Microsoft.ApiManagement/service@2023-05-01-preview' = {
+  name: api_management_name
+  location: location
+  sku: {
+    name: 'Consumption'
+    capacity: 0
+  }
+  properties: {
+    publisherEmail: api_management_publisher_email
+    publisherName: api_management_publisher_name
   }
 }

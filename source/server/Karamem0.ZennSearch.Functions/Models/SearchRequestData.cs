@@ -22,9 +22,9 @@ public class SearchRequestData
     public SearchRequestData(string queryString)
     {
         var queries = HttpUtility.ParseQueryString(queryString);
-        this.Target = EnumParser.Parse(queries["target"], SearchTarget.Both);
         this.Query = queries["query"] ?? throw new InvalidOperationException();
         this.Count = (int)UInt32Parser.Parse(queries["count"], 10);
+        this.Target = EnumParser.Parse(queries["target"], SearchTarget.Both);
     }
 
     public SearchTarget Target { get; set; }
