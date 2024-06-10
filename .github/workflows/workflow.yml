@@ -67,7 +67,7 @@ jobs:
       - name: Checkout repos
         uses: actions/checkout@v4
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.x
       - name: Restore server
@@ -81,7 +81,7 @@ jobs:
             -- NUnit.TestOutputXml=${{github.workspace}}/source/server/dist/test
         working-directory: source/server
       - name: Upload server test results
-        uses: enricomi/publish-unit-test-result-action/composite@v2
+        uses: enricomi/publish-unit-test-result-action/linux@v2
         if: always()
         with:
           files: source/server/dist/**/*.xml
