@@ -72,7 +72,7 @@ public static class ConfigureServices
     public static IServiceCollection AddOpenAI(this IServiceCollection services, IConfiguration configuration)
     {
         var azureOpenAIUrl = configuration.GetValue<string>("AzureOpenAIUrl") ?? throw new InvalidOperationException();
-        _ = services.AddSingleton(_ => new OpenAIClient(new Uri(azureOpenAIUrl), DefaultAzureCredential));
+        _ = services.AddSingleton(_ => new AzureOpenAIClient(new Uri(azureOpenAIUrl), DefaultAzureCredential));
         return services;
     }
 
@@ -94,7 +94,7 @@ public static class ConfigureServices
             azureMongoDBCollectionName
         ));
         _ = services.AddScoped(provider => new AzureOpenAIService(
-            provider.GetService<OpenAIClient>() ?? throw new InvalidOperationException(),
+            provider.GetService<AzureOpenAIClient>() ?? throw new InvalidOperationException(),
             azureOpenAIModelName
         ));
         return services;

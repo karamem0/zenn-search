@@ -15,18 +15,19 @@ using System.Threading.Tasks;
 
 namespace Karamem0.ZennSearch.Services;
 
-public class AzureOpenAIService(OpenAIClient client, string modelName)
+public class AzureOpenAIService(AzureOpenAIClient client, string modelName)
 {
 
-    private readonly OpenAIClient client = client;
+    private readonly AzureOpenAIClient client = client;
 
     private readonly string modelName = modelName;
 
     public async Task<float[]> GetEmbeddingsAsync(string text)
     {
         return await this.client
-            .GetEmbeddingsAsync(new EmbeddingsOptions(this.modelName, [text]))
-            .ContinueWith(task => task.Result.Value.Data[0].Embedding.ToArray());
+            .GetEmbeddingClient(this.modelName)
+            .GenerateEmbeddingAsync(text)
+            .ContinueWith((task) => task.Result.Value.Vector.ToArray());
     }
 
 }

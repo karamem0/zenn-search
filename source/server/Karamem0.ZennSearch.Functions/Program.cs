@@ -47,6 +47,6 @@ _ = builder.ConfigureServices((context, services) =>
 
 var host = builder.Build();
 
-host.Run();
+await host.RunAsync();
 
 #pragma warning restore CA1852

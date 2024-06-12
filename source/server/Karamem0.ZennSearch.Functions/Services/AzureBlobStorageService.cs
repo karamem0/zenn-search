@@ -7,6 +7,7 @@
 //
 
 using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using Karamem0.ZennSearch.Helpers;
 using Karamem0.ZennSearch.Models;
 using System;
@@ -47,9 +48,15 @@ public class AzureBlobStorageService(BlobContainerClient client)
         }
     }
 
-    public async Task<bool> ExistsAsync(string name)
+    public async IAsyncEnumerable<string> GetDeletedBlobNamesAsync()
     {
-        return await this.client.GetBlobClient(name).ExistsAsync();
+        await foreach (var blobPage in this.client.GetBlobsAsync().AsPages())
+        {
+            foreach (var name in blobPage.Values.Where((item) => item.Deleted).Select(item => item.Name))
+            {
+                yield return Path.GetFileNameWithoutExtension(name);
+            }
+        }
     }
 
 }

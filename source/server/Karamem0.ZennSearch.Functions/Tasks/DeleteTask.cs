@@ -39,17 +39,13 @@ public class DeleteTask(
         try
         {
             this.logger.DeletionStarted();
-            await foreach (var indexItem in this.azureAISearchService.FindAllAsync())
+            await foreach (var blobName in this.azureBlobStorageService.GetDeletedBlobNamesAsync())
             {
-                if (indexItem.Id is null)
+                if (blobName is null)
                 {
                     continue;
                 }
-                if (await this.azureBlobStorageService.ExistsAsync(Path.ChangeExtension(indexItem.Id, ".md")))
-                {
-                    continue;
-                }
-                await this.azureAISearchService.DeleteOneAsync(indexItem.Id);
+                await this.azureAISearchService.DeleteOneAsync(blobName);
             }
         }
         finally
@@ -63,17 +59,13 @@ public class DeleteTask(
         try
         {
             this.logger.DeletionStarted();
-            await foreach (var indexItem in this.azureMongoDBService.FindAllAsync())
+            await foreach (var blobName in this.azureBlobStorageService.GetDeletedBlobNamesAsync())
             {
-                if (indexItem.Id is null)
+                if (blobName is null)
                 {
                     continue;
                 }
-                if (await this.azureBlobStorageService.ExistsAsync(Path.ChangeExtension(indexItem.Id, ".md")))
-                {
-                    continue;
-                }
-                await this.azureMongoDBService.DeleteOneAsync(indexItem.Id);
+                await this.azureMongoDBService.DeleteOneAsync(blobName);
             }
         }
         finally

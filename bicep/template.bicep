@@ -36,6 +36,17 @@ resource storage_account 'Microsoft.Storage/storageAccounts@2023-01-01' = {
 resource storage_account_blob_service 'Microsoft.Storage/storageAccounts/blobServices@2023-01-01' = {
   parent: storage_account
   name: 'default'
+  properties: {
+    containerDeleteRetentionPolicy: {
+      enabled: true
+      days: 7
+    }
+    deleteRetentionPolicy: {
+      allowPermanentDelete: true
+      enabled: true
+      days: 7
+    }
+  }
 }
 
 resource storage_account_file_service 'Microsoft.Storage/storageAccounts/fileServices@2023-01-01' = {
