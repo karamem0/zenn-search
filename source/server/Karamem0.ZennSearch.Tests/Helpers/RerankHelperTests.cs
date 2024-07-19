@@ -22,76 +22,73 @@ public class RerankHelperTests
     [Test()]
     public void Fuse()
     {
-        var rankings = new[]
+        var rankings = new SearchIndexData[][]
         {
-            new[]
-            {
-                new SearchIndexData()
+            [
+                new()
                 {
                     Score = 0.8,
                     Id = "ほげほげ"
                 },
-                new SearchIndexData()
+                new()
                 {
                     Score = 0.6,
                     Id = "ふがふが"
                 },
-                new SearchIndexData()
+                new()
                 {
                     Score = 0.4,
                     Id = "ぴよぴよ"
                 },
-            },
-            new[]
-            {
-                new SearchIndexData()
+            ],
+            [
+                new()
                 {
                     Score = 0.7,
                     Id = "ふがふが"
                 },
-                new SearchIndexData()
+                new()
                 {
                     Score = 0.5,
                     Id = "ほげほげ"
                 },
-                new SearchIndexData()
+                new()
                 {
                     Score = 0.3,
                     Id = "ぴよぴよ"
                 },
-            },
-            new[]
-            {
-                new SearchIndexData()
+            ],
+            [
+                new()
                 {
                     Score = 0.9,
                     Id = "ぴよぴよ"
                 },
-                new SearchIndexData()
+                new()
                 {
                     Score = 0.2,
                     Id = "ほげほげ"
                 },
-                new SearchIndexData()
+                new()
                 {
                     Score = 0.1,
                     Id = "ふがふが"
                 }
-            }
+            ]
         };
-        var expected = new[]
+        var expected = new SearchIndexData[]
         {
-            new SearchIndexData()
+            new()
             {
                 Score = (1.0 / 1) + (1.0 / 2) + (1.0 / 2),
                 Id = "ほげほげ"
             },
-            new SearchIndexData()
+            new()
             {
                 Score = (1.0 / 2) + (1.0 / 1) + (1.0 / 3),
                 Id = "ふがふが"
             },
-            new SearchIndexData()
+            new()
             {
                 Score = (1.0 / 3) + (1.0 / 3) + (1.0 / 1),
                 Id = "ぴよぴよ"

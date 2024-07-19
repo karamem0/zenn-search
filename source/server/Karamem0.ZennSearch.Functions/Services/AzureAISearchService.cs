@@ -31,23 +31,23 @@ public class AzureAISearchService(SearchClient client, IMapper mapper)
 
     public async Task<IndexData?> FindOneAsync(string name, string etag)
     {
-        var options = new SearchOptions()
+        var searchOptions = new SearchOptions()
         {
             Filter = $"id eq '{name}' and etag eq '{etag}'",
             QueryType = SearchQueryType.Full
         };
-        var response = await this.client.SearchAsync<IndexData>("*", options);
+        var response = await this.client.SearchAsync<IndexData>("*", searchOptions);
         var results = response.Value.GetResults().Select(item => item.Document).ToArray();
         return results.FirstOrDefault();
     }
 
     public async IAsyncEnumerable<IndexData> FindAllAsync()
     {
-        var options = new SearchOptions()
+        var searchOptions = new SearchOptions()
         {
             QueryType = SearchQueryType.Full
         };
-        var response = await this.client.SearchAsync<IndexData>("*", options);
+        var response = await this.client.SearchAsync<IndexData>("*", searchOptions);
         var results = response.Value.GetResultsAsync();
         await foreach (var page in results.AsPages())
         {
@@ -74,6 +74,7 @@ public class AzureAISearchService(SearchClient client, IMapper mapper)
         vectorOptions.Queries.Add(vectorQuery);
         var searchOptions = new SearchOptions()
         {
+            QueryType = SearchQueryType.Full,
             VectorSearch = vectorOptions
         };
         var response = await this.client.SearchAsync<IndexData>(searchOptions);
