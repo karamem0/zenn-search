@@ -11,6 +11,7 @@ import React from 'react';
 import { css } from '@emotion/react';
 
 import ErrorSection from '../components/ErrorSection';
+import Footer from '../components/Footer';
 import Header from '../components/Header';
 import IndexSection from '../components/IndexSection';
 import LandingSection from '../components/LandingSection.presenter';
@@ -41,8 +42,15 @@ function MainPage(props: Readonly<MainPageProps>) {
   return (
     <div
       css={css`
-        display: flex;
-        flex-flow: column;
+        display: grid;
+        @media all and (width <= 960px) {
+          grid-template-rows: 7.5rem calc(100svh - 10.5rem) 3rem;
+          grid-template-columns: 1fr;
+        }
+        @media not all and (width <= 960px) {
+          grid-template-rows: 3rem calc(100svh - 6rem) 3rem;
+          grid-template-columns: 1fr;
+        }
       `}>
       <Header
         onDropdownSelect={onDropdownSelect}
@@ -70,9 +78,10 @@ function MainPage(props: Readonly<MainPageProps>) {
           );
         })()
       }
+      <Footer />
     </div>
   );
 
 }
 
-export default MainPage;
+export default React.memo(MainPage);

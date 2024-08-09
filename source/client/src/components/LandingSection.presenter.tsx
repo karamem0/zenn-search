@@ -8,8 +8,9 @@
 
 import React from 'react';
 
-import { css } from '@emotion/react';
 import { Caption1, Subtitle1 } from '@fluentui/react-components';
+
+import { css } from '@emotion/react';
 
 function LandingSection() {
 
@@ -19,7 +20,7 @@ function LandingSection() {
         display: grid;
         align-items: center;
         justify-content: center;
-        height: calc(100vh - 3rem);
+        padding: 1rem;
       `}>
       <div
         css={css`
@@ -46,4 +47,4 @@ function LandingSection() {
 
 }
 
-export default LandingSection;
+export default React.memo(LandingSection);
