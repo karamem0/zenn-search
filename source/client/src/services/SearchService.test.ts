@@ -53,7 +53,14 @@ test('search indexes 200 OK', () => {
     status: params.response.status,
     body: JSON.stringify(params.response.body)
   }));
-  expect(searchIndex(params.request.target, params.request.query, params.request.count)).resolves.toStrictEqual(expected);
+  expect(
+    searchIndex(
+      params.request.target,
+      params.request.query,
+      params.request.count
+    ))
+    .resolves
+    .toStrictEqual(expected);
 });
 
 test('search indexes 401 Unauthorized', () => {
@@ -70,5 +77,12 @@ test('search indexes 401 Unauthorized', () => {
   fetch.mockOnce(() => Promise.resolve({
     status: params.response.status
   }));
-  expect(searchIndex(params.request.target, params.request.query, params.request.count)).rejects.toHaveProperty('status', 401);
+  expect(
+    searchIndex(
+      params.request.target,
+      params.request.query,
+      params.request.count
+    ))
+    .rejects
+    .toEqual(new Error('401 Unauthorized'));
 });

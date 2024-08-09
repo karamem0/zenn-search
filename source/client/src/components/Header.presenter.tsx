@@ -8,14 +8,9 @@
 
 import React from 'react';
 
+import { SearchBox, Text } from '@fluentui/react-components';
+
 import { css } from '@emotion/react';
-import {
-  Button,
-  Input,
-  Link,
-  Text
-} from '@fluentui/react-components';
-import { GitHubLogoIcon, SearchIcon } from '@fluentui/react-icons-mdl2';
 
 import { useTheme } from '../providers/ThemeProvider';
 import { EventHandler } from '../types/Event';
@@ -42,23 +37,23 @@ function Header(props: Readonly<HeaderProps>) {
     <header
       css={css`
         display: grid;
-        grid-template-rows: 1.5rem 2rem 2rem;
-        grid-template-columns: 1fr auto;
         grid-gap: 0.5rem;
         align-items: center;
         justify-content: center;
         padding: 0.5rem 1rem;
         background-color: ${theme.colorBrandBackground};
-        @media (width >= 960px) {
+        @media all and (width <= 960px) {
+          grid-template-rows: 1.5rem 2rem 2rem;
+          grid-template-columns: 1fr auto;
+        }
+        @media not all and (width <= 960px) {
           grid-template-rows: 2rem;
-          grid-template-columns: 1fr 1fr 1fr auto;
+          grid-template-columns: 1fr 1fr 1fr;
         }
       `}>
       <Text
         as="h1"
         css={css`
-          grid-row: 1 / 2;
-          grid-column: 1 / 2;
           overflow: hidden;
           font-size: 1rem;
           font-weight: ${theme.fontWeightBold};
@@ -66,7 +61,11 @@ function Header(props: Readonly<HeaderProps>) {
           color: ${theme.colorNeutralBackground1};
           text-overflow: ellipsis;
           white-space: nowrap;
-          @media (width >= 960px) {
+          @media all and (width <= 960px) {
+            grid-row: 1 / 2;
+            grid-column: 1 / 2;
+          }
+          @media not all and (width <= 960px) {
             grid-row: 1 / 2;
             grid-column: 1 / 2;
             max-width: 20rem;
@@ -78,34 +77,25 @@ function Header(props: Readonly<HeaderProps>) {
         css={css`
           display: flex;
           flex-direction: column;
-          grid-row: 3 / 4;
-          grid-column: 1 / 3;
           align-items: center;
           justify-content: center;
-          @media (width >= 960px) {
+          @media all and (width <= 960px) {
+            grid-row: 3 / 4;
+            grid-column: 1 / 3;
+          }
+          @media not all and (width <= 960px) {
             grid-row: 1 / 2;
             grid-column: 2 / 3;
           }
         `}
         onSubmit={onSubmit}>
-        <Input
-          contentAfter={(
-            <Button
-              appearance="transparent"
-              size="small"
-              type="submit"
-              icon={(
-                <SearchIcon
-                  css={css`
-                  width: 1rem;
-                  height: 1rem;
-                  line-height: 1rem;
-                `} />
-              )} />
-          )}
+        <SearchBox
           css={css`
             width: 100%;
-            @media (width >= 960px) {
+            @media all and (width <= 960px) {
+              max-width: 100%;
+            }
+            @media not all and (width <= 960px) {
               max-width: 40rem;
             }
           `}
@@ -115,53 +105,22 @@ function Header(props: Readonly<HeaderProps>) {
         css={css`
           display: flex;
           flex-direction: row;
-          grid-row: 2 / 3;
-          grid-column: 1 / 3;
           align-items: center;
           justify-content: end;
-          @media (width >= 960px) {
+          @media all and (width <= 960px) {
+            grid-row: 2 / 3;
+            grid-column: 1 / 3;
+          }
+          @media not all and (width <= 960px) {
             grid-row: 1 / 2;
             grid-column: 3 / 4;
           }
         `}>
         <TargetDropdown onSelect={onDropdownSelect} />
       </div>
-      <div
-        css={css`
-          display: grid;
-          grid-row: 1 / 2;
-          grid-column: 2 / 3;
-          align-items: center;
-          justify-content: end;
-          @media (width >= 960px) {
-            grid-row: 1 / 2;
-            grid-column: 4 / 5;
-          }
-        `}>
-        <Link
-          as="a"
-          href="https://github.com/karamem0/zenn-search"
-          target="_blank"
-          css={css`
-            color: ${theme.colorNeutralBackground1};
-            &:active {
-              color: ${theme.colorNeutralBackground1Pressed};
-            }
-            &:hover {
-              color: ${theme.colorNeutralBackground1Hover};
-            }
-          `}>
-          <GitHubLogoIcon
-            css={css`
-              width: 1.5rem;
-              height: 1.5rem;
-              line-height: 1.5rem;
-            `} />
-        </Link>
-      </div>
     </header>
   );
 
 }
 
-export default Header;
+export default React.memo(Header);

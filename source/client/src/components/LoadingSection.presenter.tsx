@@ -8,24 +8,21 @@
 
 import React from 'react';
 
-import { css } from '@emotion/react';
 import { Spinner } from '@fluentui/react-components';
+
+import { css } from '@emotion/react';
 
 function LoadingSection() {
 
   return (
     <section
       css={css`
-      display: grid;
-      height: calc(100vh - 5rem);
-      @media (width >= 960px) {
-        height: calc(100vh - 3rem);
-      }
-    `}>
+        display: grid;
+      `}>
       <Spinner />
     </section>
   );
 
 }
 
-export default LoadingSection;
+export default React.memo(LoadingSection);

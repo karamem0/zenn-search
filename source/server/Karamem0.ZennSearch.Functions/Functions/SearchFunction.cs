@@ -69,10 +69,6 @@ public class SearchFunction(
             httpResponse.StatusCode = HttpStatusCode.InternalServerError;
             return httpResponse;
         }
-        finally
-        {
-            this.logger.SearchEnded();
-        }
     }
 
 }

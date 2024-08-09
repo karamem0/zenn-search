@@ -11,6 +11,7 @@ import React from 'react';
 import { css } from '@emotion/react';
 
 import ErrorSection from '../components/ErrorSection';
+import Footer from '../components/Footer';
 import Header from '../components/Header';
 import IndexSection from '../components/IndexSection';
 import LandingSection from '../components/LandingSection.presenter';
@@ -41,38 +42,57 @@ function MainPage(props: Readonly<MainPageProps>) {
   return (
     <div
       css={css`
-        display: flex;
-        flex-flow: column;
+        display: grid;
+        @media all and (width <= 960px) {
+          grid-template-rows: 7.5rem 1fr 3rem;
+          grid-template-columns: 1fr;
+        }
+        @media not all and (width <= 960px) {
+          grid-template-rows: 3rem 1fr 3rem;
+          grid-template-columns: 1fr;
+        }
       `}>
       <Header
         onDropdownSelect={onDropdownSelect}
         onInputChange={onInputChange}
         onSubmit={onSubmit} />
-      {
-        (() => {
-          if (loading) {
-            return (
-              <LoadingSection />
-            );
+      <div
+        css={css`
+          overflow-y: auto;
+          @media all and (width <= 960px) {
+            height: calc(100svh - 10.5rem);
           }
-          if (error) {
-            return (
-              <ErrorSection />
-            );
+          @media not all and (width <= 960px) {
+            height: calc(100svh - 6rem);
           }
-          if (indexes == null) {
+        `}>
+        {
+          (() => {
+            if (loading) {
+              return (
+                <LoadingSection />
+              );
+            }
+            if (error) {
+              return (
+                <ErrorSection />
+              );
+            }
+            if (indexes == null) {
+              return (
+                <LandingSection />
+              );
+            }
             return (
-              <LandingSection />
+              <IndexSection indexes={indexes} />
             );
-          }
-          return (
-            <IndexSection indexes={indexes} />
-          );
-        })()
-      }
+          })()
+        }
+      </div>
+      <Footer />
     </div>
   );
 
 }
 
-export default MainPage;
+export default React.memo(MainPage);

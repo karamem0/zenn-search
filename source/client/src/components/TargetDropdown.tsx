@@ -9,14 +9,9 @@
 import React from 'react';
 
 import { Event, EventHandler } from '../types/Event';
-import { SearchTarget } from '../types/Model';
+import { TargetDropdownOption, targetDropdownOptions } from '../types/Option';
 
 import Presenter from './TargetDropdown.presenter';
-
-interface TargetDropdownOption {
-  text: string,
-  value: string
-}
 
 interface TargetDropdownProps {
   onSelect?: EventHandler<string>
@@ -28,35 +23,19 @@ function TargetDropdown(props: Readonly<TargetDropdownProps>) {
     onSelect
   } = props;
 
-  const options = React.useMemo(() => [
-    {
-      text: '(指定しない)',
-      value: SearchTarget.both
-    },
-    {
-      text: 'Azure AI Search (HNSW)',
-      value: 'aisearch'
-    },
-    {
-      text: 'Azure Cosmos DB for MongoDB (IVF)',
-      value: 'mongodb'
-    }
-  ], []);
-
-  const [ selectedOption, setSelectedOption ] = React.useState(options[0]);
+  const [ selectedOption, setSelectedOption ] = React.useState(targetDropdownOptions[0]);
 
   const handleSelect = React.useCallback((event?: Event, value?: TargetDropdownOption) => {
-    setSelectedOption(value ?? options[0]);
-    onSelect?.(event, value?.value ?? options[0].value);
+    setSelectedOption(value ?? targetDropdownOptions[0]);
+    onSelect?.(event, value?.value ?? targetDropdownOptions[0].value);
   }, [
-    options,
     onSelect
   ]);
 
   return (
     <Presenter
-      defaultOption={options[0]}
-      options={options}
+      defaultOption={targetDropdownOptions[0]}
+      options={targetDropdownOptions}
       selectedOption={selectedOption}
       title='データソース'
       onSelect={handleSelect} />

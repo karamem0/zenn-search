@@ -45,10 +45,6 @@ public class DeleteFunction(
             this.logger.UnhandledError(ex.Message, ex);
             throw;
         }
-        finally
-        {
-            this.logger.DeletionEnded();
-        }
     }
 
 #pragma warning restore IDE0060

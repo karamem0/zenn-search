@@ -12,16 +12,18 @@ import ReactDOM from 'react-dom/client';
 
 import { webLightTheme } from '@fluentui/react-components';
 
+import { Global } from '@emotion/react';
+import * as ress from 'ress';
+
 import MainPage from './pages/MainPage';
 import TelemetryProvider from './providers/TelemetryProvider';
 import ThemeProvider from './providers/ThemeProvider';
-
-import 'ress';
 
 ReactDOM
   .createRoot(document.getElementById('root') as Element)
   .render(
     <React.StrictMode>
+      <Global styles={ress} />
       <TelemetryProvider>
         <ThemeProvider theme={webLightTheme}>
           <MainPage />

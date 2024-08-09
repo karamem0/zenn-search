@@ -8,8 +8,9 @@
 
 import React from 'react';
 
-import { css } from '@emotion/react';
 import { Caption1, Subtitle1 } from '@fluentui/react-components';
+
+import { css } from '@emotion/react';
 
 function ErrorSection() {
 
@@ -46,4 +47,4 @@ function ErrorSection() {
 
 }
 
-export default ErrorSection;
+export default React.memo(ErrorSection);

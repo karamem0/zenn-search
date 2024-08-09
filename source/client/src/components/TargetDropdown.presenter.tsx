@@ -8,15 +8,12 @@
 
 import React from 'react';
 
-import { css } from '@emotion/react';
 import { Dropdown, Option } from '@fluentui/react-components';
 
-import { EventHandler } from '../types/Event';
+import { css } from '@emotion/react';
 
-interface TargetDropdownOption {
-  text: string,
-  value: string
-}
+import { EventHandler } from '../types/Event';
+import { TargetDropdownOption } from '../types/Option';
 
 interface TargetDropdownProps {
   defaultOption: TargetDropdownOption,
@@ -52,10 +49,10 @@ function TargetDropdown(props: Readonly<TargetDropdownProps>) {
           `}>
           {selectedOption?.text}
         </span>
-    )}
+      )}
       css={css`
         width: 100%;
-        @media (width >= 960px) {
+        @media not all and (width <= 960px) {
           max-width: 18rem;
         }
       `}
